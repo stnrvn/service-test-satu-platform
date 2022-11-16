@@ -1,5 +1,22 @@
 const express = require('express')
+const { connect } = require('./config/mongodb')
+const router = require('./routes/index')
+
 const app = express()
-const PORT = process.env.PORT || 4000
-app.get('/', (req, res) => res.send('<h2> Hello World! </h2>'));
-app.listen(PORT, () => console.log(`app listening on port ${PORT}`))
+const port = 6000
+
+app.use(express.json())
+
+app.use(express.urlencoded({
+    extended:true
+}))
+
+connect().then(async () => {
+  console.log('mongo success to connect!')
+  
+  app.use('/', router)
+
+  app.listen(port, () => {
+  console.log(`Example app listening at http://localhost:${port}`)
+  })
+})
