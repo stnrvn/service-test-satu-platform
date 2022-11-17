@@ -3,9 +3,9 @@ const { getDatabase } = require('../config/mongodb')
 
 class User {
   static async get(sortParams, sortArrayParams) {
+    // return getDatabase().collection('user').find().sort(sortParams).toArray()
     return getDatabase().collection('user').aggregate(
       [
-        { $sort : sortParams },
         {
           $unwind: {
             path: "$address",
@@ -23,10 +23,11 @@ class User {
             size: { $sum: sortArrayParams }
           },
         },
+        { $sort : sortParams },
       ]
     ).toArray()
-
   }
+
   static getById(id) {
     return getDatabase().collection('user').find({"_id": ObjectId(id)}).toArray()
   }

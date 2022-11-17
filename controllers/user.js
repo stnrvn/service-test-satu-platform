@@ -19,6 +19,7 @@ class UserController {
         }[req.query.address]
 
         const sort = await {...name, ...gender}
+        console.log(sort, sortArrayAddress)
 
         const users = await User.get(sort, sortArrayAddress)
 
