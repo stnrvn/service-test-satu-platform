@@ -2,8 +2,25 @@ const { ObjectId } = require('mongodb')
 const { getDatabase } = require('../config/mongodb')
 
 class User {
-  static async get(sortParams) {
-    return getDatabase().collection('user').find().sort( sortParams ).toArray()
+  static async get(sortParams, sortArrayParams) {
+    return getDatabase().collection('user').aggregate(
+      [
+        { $sort : sortParams },
+        { $unwind: "$address" }, 
+        {
+          $group: {
+            _id: "$_id",
+            firstName : { $first: "$firstName" },
+            lastName : { $first: "$lastName" },
+            gender : { $first: "$gender" },
+            email : { $first: "$email" },
+            address: { $push: "$address" },
+            size: { $sum: sortArrayParams }
+          }
+        },
+      ]
+    ).toArray()
+
   }
   static getById(id) {
     return getDatabase().collection('user').find({"_id": ObjectId(id)}).toArray()

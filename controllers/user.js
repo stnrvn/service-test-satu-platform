@@ -3,25 +3,24 @@ const User = require("../models/user")
 class UserController {
   static async get(req, res) {
     try {
-        const sortName = await {
-            ASC: { "firstName": 1, "lastName": 1 },
-            DESC: { "firstName": -1, "lastName": -1 },
+        const name = await {
+            ASC: { "firstName": 1 },
+            DESC: { "firstName": -1},
         }[req.query.name]
 
-        const sortGender = await {
+        const gender = await {
             ASC: { "gender": 1 },
             DESC: { "gender": -1 }
         }[req.query.gender]
 
-        const sortAddress = await {
-            ASC: { "address": 1 },
-            DESC: { "address": -1 }
+        const sortArrayAddress = await {
+            ASC: 1,
+            DESC: -1
         }[req.query.address]
 
-        const sort = await {...sortName, ...sortGender, ...sortAddress}
-        console.log(sort)
+        const sort = await {...name, ...gender}
 
-        const users = await User.get(sort)
+        const users = await User.get(sort, sortArrayAddress)
 
         if (!users) {
           return res.status(400).json({
