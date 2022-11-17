@@ -6,7 +6,12 @@ class User {
     return getDatabase().collection('user').aggregate(
       [
         { $sort : sortParams },
-        { $unwind: "$address" }, 
+        {
+          $unwind: {
+            path: "$address",
+            "preserveNullAndEmptyArrays": true
+          }
+        },
         {
           $group: {
             _id: "$_id",
@@ -16,7 +21,7 @@ class User {
             email : { $first: "$email" },
             address: { $push: "$address" },
             size: { $sum: sortArrayParams }
-          }
+          },
         },
       ]
     ).toArray()
