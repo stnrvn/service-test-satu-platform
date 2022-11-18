@@ -4,30 +4,31 @@ class UserController {
   static async get(req, res) {
     try {
         const name = await {
-            ASC: { "firstName": 1 },
-            DESC: { "firstName": -1},
-        }[req.query.name]
+            ASC: { firstName: 1 },
+            DESC: { firstName: -1},
+        }[req.query.name] || {}
 
         const gender = await {
-            ASC: { "gender": 1 },
-            DESC: { "gender": -1 }
-        }[req.query.gender]
+            ASC: { gender: 1 },
+            DESC: { gender: -1 }
+        }[req.query.gender] || {}
 
-        const sortArrayAddress = await {
-            ASC: 1,
-            DESC: -1
-        }[req.query.address]
+        const address = await {
+            ASC: { addressLength: 1 },
+            DESC: { addressLength: -1 }
+        }[req.query.address] || {}
 
-        const sort = await {...name, ...gender}
-        console.log(sort, sortArrayAddress)
+        const sort = await {...name, ...gender, ...address}
 
-        const users = await User.get(sort, sortArrayAddress)
+        const users = await User.get(sort)
 
         if (!users) {
           return res.status(400).json({
             message: "not found"
           })
         }
+
+        console.log(users, "poipoi")
 
         return res.status(200).json(users)
     } catch (error) {
